@@ -87,7 +87,7 @@ def game(p1, p2, n=1):
 	return (p1.get_reward(), p2.get_reward())
 
 """Game code - runs iteration of games for all players and then writes results"""
-games = 10 000
+games = 10000
 probability = 1
 memory = 3
 
