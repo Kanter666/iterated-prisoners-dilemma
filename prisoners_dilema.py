@@ -2,6 +2,8 @@ import random
 
 
 class Player():
+	"""Player class - models memory, randomness in answer and can take a decision
+	function as an input - default is always confess (return True)."""
 	memory = []
 	memory_s = 0
 	prob = 1
@@ -9,7 +11,7 @@ class Player():
 	cost = [0, -1, -8, -12]
 	decision = lambda self: True
 
-	def __init__(self, memory_size, probability=1, decision= lambda self : True):
+	def __init__(self, memory_size, probability=1, decision= lambda self : True, cost = [0, -1, -8, -12]):
 		self.memory_s = memory_size
 		self.prob = probability
 		self.decision = decision
@@ -39,8 +41,15 @@ class Player():
 	def get_reward(self):
 		return self.reward
 
-def good(self):
-	return False
+	def null_reward(self):
+		self.reward = 0
+
+	def get_decision_type(self):
+		return self.decision.__name__
+
+"""Functions that decide players strategy"""
+def rand(self):
+	return bool(random.getrandbits(1))
 
 def tic_for_toe(self):
 	if len(self.memory)>0:
@@ -48,14 +57,43 @@ def tic_for_toe(self):
 	else:
 		return False
 
+def worry_cat(self):
+	if len(self.memory)>0:
+		if not self.memory[-1][0] and not self.memory[-1][1]:
+			return False
+		else:
+			for s in range(0, min(3, len(self.memory))):
+				if self.memory[-1-s][0] and not self.memory[-1-s][1]:
+					return False
+		if not self.memory[-1][0] and self.memory[-1][1]:
+			return True
+		else:
+			return False
+	else:
+		return True
 
-p1 = Player(3, decision = good)
-p2 = Player(3, decision = tic_for_toe)
+"""Function that plays n iterations of games with 2 players"""
+def game(p1, p2, n=1):
+	for g in range(games):
+		a1 = p1.confess()
+		a2 = p2.confess()
+		p1.add_memory(a1, a2)
+		p2.add_memory(a2, a1)
+		print("Game {}, actions p1: {} p2: {}".format(g, a1, a2))
+	return (p1.get_reward(), p2.get_reward())
 
-for i in range(20):
-	a1 = p1.confess()
-	a2 = p2.confess()
-	p1.add_memory(a1, a2)
-	p2.add_memory(a2, a1)
-	print("Game {}, actions p1: {} p2: {}".format(i, a1, a2))
-print("Reward p1: {} p2: {}".format(p1.get_reward(), p2.get_reward()))
+"""Game code - runs iteration of games for all players and then writes results"""
+games = 20
+probability = 1
+memory = 3
+
+p1 = Player(memory, probability=probability, decision=rand)
+p2 = Player(memory, probability=probability, decision=tic_for_toe)
+p3 = Player(memory, probability=probability, decision=worry_cat)
+
+players = [p1, p2, p3]
+for i in range(0, len(players)-1):
+	for j in range(i+1, len(players)):
+		print("Player1 {}, Player2 {}".format(players[i].get_decision_type, players[j].get_decision_type))
+		r1, r2 = game(players[i], players[j], n=games)
+		print("Reward p1: {} p2: {}".format(r1, r2))
