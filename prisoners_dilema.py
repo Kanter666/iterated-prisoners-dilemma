@@ -100,6 +100,6 @@ for i in range(0, len(players)-1):
 	for j in range(i+1, len(players)):
 		print("Player1 {}, Player2 {}".format(players[i].get_decision_type(), players[j].get_decision_type()))
 		r1, r2 = game(players[i], players[j], n=games)
-		print("Awerage reward p1: {} p2: {}".format(r1/games, r2/games))
+		print("Average reward p1: {} p2: {}".format(r1/games, r2/games))
 		players[i].null_reward()
 		players[j].null_reward()
